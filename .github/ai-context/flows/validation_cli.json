@@ -4,13 +4,15 @@
     "when_to_use": "Adding new validators, commands, or understanding validation logic",
     "built_using": "Context-Driven Development methodology on itself (meta!)",
     "related_files": [
+      ".github/copilot-instructions.md",
       "bin/cdd.js",
       "src/commands/",
       "src/validators/",
       "README.md"
-    ]
+    ],
+    "reading_order": "Start with .github/copilot-instructions.md for quick overview, then read this file for deep dive"
   },
-  "last_updated": "2025-11-24",
+  "last_updated": "2025-11-24T20:30:00Z",
   "overview": {
     "name": "@context-driven-dev/cli",
     "purpose": "Validate and manage Context-Driven Development files",
@@ -276,7 +278,8 @@
     "self_documenting": "This file documents the tool that validates this file (meta loop!)",
     "compounding_effect": "Tool improves CDD → CDD improves tool building → Better tools faster",
     "autonomous_maintenance": "AI should update this file when CLI changes (autonomous protocol test)",
-    "dogfooding_works": "Using the methodology on itself reveals gaps and validates approach"
+    "dogfooding_works": "Using the methodology on itself reveals gaps and validates approach",
+    "copilot_instructions_created": "2025-11-24 - Added .github/copilot-instructions.md as quick reference layer, this file remains deep dive"
   },
   "installation": {
     "from_source": [
@@ -308,6 +311,23 @@
       "symptom": "Exit code 1 even though warnings only",
       "cause": "--strict flag treats warnings as errors",
       "fix": "Fix warnings or remove --strict flag"
+    },
+    "missing_js_extension": {
+      "symptom": "Cannot find module (ES module import)",
+      "cause": "ES modules require .js extension in import paths",
+      "fix": "Add .js extension: import { x } from './file.js'",
+      "critical": "Most common mistake when adding new imports"
+    }
+  },
+  "documentation_structure": {
+    "entry_point": ".github/copilot-instructions.md",
+    "purpose": "Quick reference for common tasks, critical patterns, and architecture overview",
+    "deep_dive": ".github/ai-context/flows/validation_cli.json (this file)",
+    "purpose_detail": "Complete implementation details, extension patterns, validation rules",
+    "dry_principle": "Copilot instructions references this file for details to avoid duplication",
+    "when_to_update": {
+      "copilot_instructions": "Change critical patterns, add common tasks, update architecture overview",
+      "validation_cli_json": "Add validators, document implementation details, track meta-lessons"
     }
   }
 }
