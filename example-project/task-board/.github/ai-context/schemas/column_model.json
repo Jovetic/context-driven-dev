@@ -1,12 +1,12 @@
 {
   "type": "schema",
   "name": "column_model",
-  "description": "Column schema for Kanban board - IMPLEMENTED BY AI #2",
+  "description": "Column schema for Kanban board - IMPLEMENTED by AI #2",
   "version": "1.0.0",
   "last_updated": "2025-11-24",
   "status": "implemented",
   "file": "src/models/Column.js",
-  "implemented_by": "AI #2 using CDD context files",
+  "implemented_by": "AI #2",
   
   "schema": {
     "name": {
@@ -14,7 +14,7 @@
       "required": true,
       "minlength": 2,
       "maxlength": 50,
-      "description": "Column name (e.g., 'To Do', 'In Progress', 'Done')"
+      "description": "Column name (trimmed)"
     },
     "boardId": {
       "type": "ObjectId",
@@ -39,36 +39,19 @@
     }
   },
   
-  "relationships": {
-    "belongs_to": "Board",
-    "has_many": "Task",
-    "cascade_delete": "Deleting column removes all tasks in that column"
-  },
-  
   "indexes": [
-    {"fields": ["boardId", "position"], "purpose": "Sort columns within board efficiently"}
+    {"fields": ["boardId", "position"], "purpose": "Sort columns within boards"}
   ],
   
   "hooks": {
-    "pre_save": "Auto-increments position for new columns on the same board"
+    "pre_save": "Auto-increments position for new columns in a board"
   },
   
-  "validation_rules": [
-    "Name: 2-50 characters, required",
-    "boardId: required ObjectId reference to Board"
-  ],
-  
   "api_endpoints": [
-    "GET /api/columns?boardId=xxx - List columns for a board",
-    "GET /api/columns/:id - Get single column",
     "POST /api/columns - Create column",
+    "GET /api/columns?boardId=... - List columns for board",
     "PUT /api/columns/:id - Update column",
-    "DELETE /api/columns/:id - Delete column (cascade to tasks)",
-    "PATCH /api/columns/reorder - Batch update positions for drag-and-drop"
-  ],
-  
-  "cdd_notes": {
-    "pattern_reuse": "Copied position auto-increment pattern from Task model pre-save hook",
-    "learned_from_context": "Followed established patterns in task_model.json and task_crud.json"
-  }
+    "DELETE /api/columns/:id - Delete column",
+    "PATCH /api/columns/:id/position - Update position (reorder)"
+  ]
 }
