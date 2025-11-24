@@ -1,0 +1,20 @@
+{
+  "_ai_instructions": {
+    "purpose": "Document known mistakes and correct approaches",
+    "when_to_use": "Before implementing anything - check here first",
+    "update_protocol": "Add entry whenever you discover a bug or mistake"
+  },
+  "last_updated": "2025-11-24",
+  "critical_never_do": [
+    "Add critical mistakes here as you discover them"
+  ],
+  "anti_patterns": {
+    "example_pattern": {
+      "wrong": "Example of incorrect approach",
+      "correct": "Example of correct approach",
+      "why_bad": "Explanation of why the wrong approach fails",
+      "discovered": "2025-11-24",
+      "example": "Code example if applicable"
+    }
+  }
+}

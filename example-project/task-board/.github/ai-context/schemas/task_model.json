@@ -1,0 +1,107 @@
+{
+  "type": "schema",
+  "name": "task_model",
+  "description": "Task schema for Kanban board - IMPLEMENTED",
+  "version": "1.0.0",
+  "last_updated": "2025-11-24",
+  "status": "implemented",
+  "file": "src/models/Task.js",
+  
+  "schema": {
+    "title": {
+      "type": "String",
+      "required": true,
+      "minlength": 3,
+      "maxlength": 200,
+      "description": "Task title/summary (trimmed)"
+    },
+    "description": {
+      "type": "String",
+      "required": false,
+      "maxlength": 2000,
+      "description": "Detailed task description (trimmed)"
+    },
+    "status": {
+      "type": "String",
+      "enum": ["todo", "in-progress", "done"],
+      "default": "todo",
+      "description": "Current task status"
+    },
+    "priority": {
+      "type": "String",
+      "enum": ["low", "medium", "high"],
+      "default": "medium",
+      "description": "Task priority level"
+    },
+    "assignedTo": {
+      "type": "String",
+      "required": false,
+      "description": "User assigned to task (optional)"
+    },
+    "dueDate": {
+      "type": "Date",
+      "required": false,
+      "description": "Optional due date"
+    },
+    "boardId": {
+      "type": "ObjectId",
+      "ref": "Board",
+      "required": true,
+      "description": "Parent board reference"
+    },
+    "columnId": {
+      "type": "ObjectId",
+      "ref": "Column",
+      "required": true,
+      "description": "Column this task belongs to"
+    },
+    "position": {
+      "type": "Number",
+      "default": 0,
+      "description": "Order within column (auto-incremented)"
+    },
+    "createdAt": {
+      "type": "Date",
+      "auto": true,
+      "description": "Mongoose timestamp"
+    },
+    "updatedAt": {
+      "type": "Date",
+      "auto": true,
+      "description": "Mongoose timestamp"
+    }
+  },
+  
+  "virtuals": {
+    "ageInDays": {
+      "description": "Calculates task age in days since creation",
+      "formula": "(now - createdAt) / (1000 * 60 * 60 * 24)"
+    }
+  },
+  
+  "indexes": [
+    {"fields": ["boardId", "status"], "purpose": "Filter tasks by board and status"},
+    {"fields": ["columnId", "position"], "purpose": "Sort tasks within columns"}
+  ],
+  
+  "hooks": {
+    "pre_save": "Auto-increments position for new tasks in a column"
+  },
+  
+  "validation_rules": [
+    "Title: 3-200 characters, required",
+    "Description: max 2000 characters, optional",
+    "Status: one of [todo, in-progress, done]",
+    "Priority: one of [low, medium, high]",
+    "boardId and columnId: required ObjectId references"
+  ],
+  
+  "api_endpoints": [
+    "GET /api/tasks - List tasks with filters (boardId, columnId, status, priority)",
+    "GET /api/tasks/:id - Get single task",
+    "POST /api/tasks - Create task",
+    "PUT /api/tasks/:id - Update task",
+    "DELETE /api/tasks/:id - Delete task",
+    "PATCH /api/tasks/:id/position - Update position (drag-and-drop)"
+  ]
+}

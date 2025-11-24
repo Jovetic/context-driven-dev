@@ -1,0 +1,36 @@
+{
+  "_ai_instructions": {
+    "purpose": "Template for documenting feature implementation flows",
+    "when_to_use": "When implementing [feature type]",
+    "how_to_use": "Copy this template and fill in specifics for your feature"
+  },
+  "last_updated": "2025-11-24",
+  "feature": "[Feature Name]",
+  "flow": [
+    {
+      "step": 1,
+      "phase": "Setup",
+      "action": "Describe what to do",
+      "files": [
+        "List files to modify"
+      ],
+      "why": "Explain reasoning"
+    },
+    {
+      "step": 2,
+      "phase": "Implementation",
+      "action": "Describe implementation",
+      "files": [
+        "List files to create/modify"
+      ]
+    },
+    {
+      "step": 3,
+      "phase": "Testing",
+      "action": "How to verify it works",
+      "commands": [
+        "test command"
+      ]
+    }
+  ]
+}

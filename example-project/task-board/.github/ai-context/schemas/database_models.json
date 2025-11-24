@@ -1,0 +1,26 @@
+{
+  "_ai_instructions": {
+    "purpose": "Document database schema and relationships",
+    "when_to_use": "When working with data models or database queries"
+  },
+  "last_updated": "2025-11-24",
+  "database_type": "[PostgreSQL, MySQL, MongoDB, etc]",
+  "models": {
+    "example_model": {
+      "table": "table_name",
+      "fields": {
+        "id": "primary key",
+        "name": "string",
+        "created_at": "timestamp"
+      },
+      "relationships": {
+        "has_many": [
+          "other_model"
+        ],
+        "belongs_to": [
+          "parent_model"
+        ]
+      }
+    }
+  }
+}

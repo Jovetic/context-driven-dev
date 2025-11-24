@@ -1,0 +1,19 @@
+{
+  "_ai_instructions": {
+    "purpose": "Troubleshooting decision trees for common issues",
+    "when_to_use": "When debugging or investigating errors"
+  },
+  "last_updated": "2025-11-24",
+  "troubleshooting": {
+    "example_error": {
+      "symptom": "Describe what the user sees",
+      "possible_causes": [
+        {
+          "cause": "Most common cause",
+          "check": "How to verify this is the issue",
+          "fix": "How to resolve it"
+        }
+      ]
+    }
+  }
+}

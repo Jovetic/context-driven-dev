@@ -1,0 +1,152 @@
+{
+  "type": "flow",
+  "name": "task_crud",
+  "description": "Complete flow for Task CRUD operations",
+  "version": "1.0.0",
+  "last_updated": "2025-11-24",
+  "status": "implemented",
+  
+  "files_involved": [
+    "src/models/Task.js",
+    "src/controllers/taskController.js",
+    "src/routes/tasks.js",
+    "src/server.js"
+  ],
+  
+  "architecture_pattern": "MVC (Model-View-Controller)",
+  
+  "flows": {
+    "create_task": {
+      "endpoint": "POST /api/tasks",
+      "steps": [
+        "Client sends JSON body with task data",
+        "Express parses JSON (express.json() middleware)",
+        "Route handler calls taskController.createTask()",
+        "Controller validates data (Mongoose schema validation)",
+        "Pre-save hook auto-increments position if new task",
+        "Task.create() saves to MongoDB",
+        "Returns 201 with created task",
+        "On validation error: returns 400 with error details"
+      ],
+      "example_request": {
+        "title": "Fix homepage bug",
+        "description": "Homepage loads slowly",
+        "status": "todo",
+        "priority": "high",
+        "boardId": "507f1f77bcf86cd799439011",
+        "columnId": "507f191e810c19729de860ea"
+      },
+      "example_response": {
+        "success": true,
+        "task": {
+          "_id": "507f1f77bcf86cd799439012",
+          "title": "Fix homepage bug",
+          "position": 5,
+          "createdAt": "2025-11-24T10:00:00.000Z"
+        }
+      }
+    },
+    
+    "get_tasks": {
+      "endpoint": "GET /api/tasks?boardId=...&status=...&priority=...",
+      "steps": [
+        "Client sends query parameters (optional filters)",
+        "Route handler calls taskController.getTasks()",
+        "Controller builds MongoDB filter from query params",
+        "Task.find(filter).sort().lean() queries database",
+        ".lean() returns plain objects (better performance for read-only)",
+        "Returns 200 with array of tasks and count"
+      ],
+      "filtering": {
+        "boardId": "Filter by specific board",
+        "columnId": "Filter by specific column",
+        "status": "Filter by status (todo/in-progress/done)",
+        "priority": "Filter by priority (low/medium/high)"
+      },
+      "sorting": "columnId ascending, then position ascending"
+    },
+    
+    "update_task": {
+      "endpoint": "PUT /api/tasks/:id",
+      "steps": [
+        "Client sends task ID in URL params + updated fields in body",
+        "Route handler calls taskController.updateTask()",
+        "Controller uses findByIdAndUpdate with options",
+        "Options: new: true (return updated doc), runValidators: true",
+        "Mongoose validates updated fields",
+        "Returns 200 with updated task",
+        "Returns 404 if task not found",
+        "Returns 400 on validation errors"
+      ],
+      "partial_updates": "Can update any subset of fields (except _id, createdAt)"
+    },
+    
+    "delete_task": {
+      "endpoint": "DELETE /api/tasks/:id",
+      "steps": [
+        "Client sends task ID in URL params",
+        "Route handler calls taskController.deleteTask()",
+        "Controller uses findByIdAndDelete()",
+        "Returns 200 with success message",
+        "Returns 404 if task not found"
+      ],
+      "cleanup": "No cascade delete needed (tasks don't own child resources)"
+    },
+    
+    "update_position": {
+      "endpoint": "PATCH /api/tasks/:id/position",
+      "purpose": "Support drag-and-drop reordering",
+      "steps": [
+        "Client sends { columnId, position } in body",
+        "Route handler calls taskController.updateTaskPosition()",
+        "Controller validates required fields",
+        "Updates both columnId (if moved to different column) and position",
+        "Returns 200 with updated task"
+      ],
+      "frontend_usage": "Call this when user drags task to new position/column"
+    }
+  },
+  
+  "error_handling": {
+    "400_bad_request": [
+      "Validation errors (missing required fields, invalid enum values)",
+      "Invalid MongoDB ObjectId format (CastError)"
+    ],
+    "404_not_found": [
+      "Task ID doesn't exist in database"
+    ],
+    "500_internal_error": [
+      "Database connection issues",
+      "Unexpected errors (logged to console)"
+    ]
+  },
+  
+  "response_format": {
+    "success_response": {
+      "success": true,
+      "task": "{ ... }  // or  tasks: [...]"
+    },
+    "error_response": {
+      "success": false,
+      "error": "Human-readable message",
+      "details": "Array of validation errors (optional)"
+    }
+  },
+  
+  "testing_notes": [
+    "Use MongoDB memory server or local instance for tests",
+    "Test validation errors (missing fields, invalid enum values)",
+    "Test CastError handling (invalid ObjectId format)",
+    "Test position auto-increment in pre-save hook",
+    "Test query filtering (multiple combinations)",
+    "Test partial updates (only some fields changed)"
+  ],
+  
+  "next_steps": [
+    "Add Board and Column models",
+    "Add authentication middleware (requireAuth)",
+    "Add ownership validation (user can only modify their tasks)",
+    "Add pagination for large task lists",
+    "Add search/filter by title or description"
+  ]
+}
