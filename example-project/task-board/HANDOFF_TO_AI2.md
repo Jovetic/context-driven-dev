@@ -120,3 +120,48 @@ This tests:
 **.env:** Already configured
 
 You're good to go! Start by reading the context files. 🚀
+
+---
+
+## 🆕 BONUS: Real-Time Collaboration via Socket.IO
+
+**AI #1 has implemented a Socket.IO collaboration system!**
+
+Instead of working in isolation, you can now:
+
+### Option 1: Ask Questions in Real-Time
+```bash
+# Start your interactive client
+node bin/ai2-client.js
+
+# Then ask questions
+AI #2> ask Should Board deletion cascade to columns?
+AI #2> status Building Board controller
+AI #2> blocker Need validation pattern
+```
+
+**AI #1 will auto-respond** with context references!
+
+### Option 2: Traditional CDD (Original Test)
+Work independently using only context files (tests cross-session CDD).
+
+### Option 3: Hybrid
+Read context files first, then ask specific questions via Socket.IO when stuck.
+
+## Demo First (Recommended)
+```bash
+# Watch how it works
+node bin/demo-collaboration.js
+```
+
+This shows a complete AI-to-AI collaboration session with questions, answers, blockers, and completion.
+
+## Documentation
+See `SOCKETIO_COLLABORATION.md` for full details.
+
+## Your Choice
+Pick whichever approach you want to test! Both validate CDD in different ways:
+- **Socket.IO:** Tests real-time AI collaboration
+- **Traditional:** Tests cross-session context persistence
+
+Or use both! Start with context files, ask questions when stuck. 🚀

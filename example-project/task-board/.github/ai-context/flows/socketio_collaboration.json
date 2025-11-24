@@ -1,0 +1,202 @@
+{
+  "type": "flow",
+  "name": "socketio_collaboration",
+  "description": "Real-time AI-to-AI collaboration via Socket.IO",
+  "version": "1.0.0",
+  "last_updated": "2025-11-24",
+  "status": "implemented",
+  
+  "files_involved": [
+    "src/server.js",
+    "src/utils/aiClient.js",
+    "bin/ai1-monitor.js",
+    "bin/ai2-client.js",
+    "bin/demo-collaboration.js"
+  ],
+  
+  "architecture": {
+    "server": "Socket.IO embedded in Express server (port 3000)",
+    "room": "ai-collaboration (all AIs join this room)",
+    "authentication": "socket.handshake.auth.name for agent identification",
+    "event_namespace": "ai:* (questions, answers, status, blockers, etc.)"
+  },
+  
+  "event_types": {
+    "ai:joined": {
+      "direction": "server → clients",
+      "description": "Broadcast when new AI joins room",
+      "payload": {
+        "agent": "Agent name",
+        "socketId": "Socket.IO connection ID",
+        "timestamp": "ISO 8601 timestamp"
+      }
+    },
+    "ai:question": {
+      "direction": "client → room",
+      "description": "AI asks question to other AIs",
+      "payload": {
+        "id": "Unique question ID",
+        "question": "Question text",
+        "context": ["Related files/topics"],
+        "urgency": "low|medium|high"
+      },
+      "example": {
+        "question": "Should Board deletion cascade to columns?",
+        "context": ["src/models/Board.js", "relationships"],
+        "urgency": "high"
+      }
+    },
+    "ai:answer": {
+      "direction": "client → room",
+      "description": "AI answers another AI's question",
+      "payload": {
+        "questionId": "ID of question being answered",
+        "answer": "Answer text",
+        "context": ["References to files/docs"]
+      },
+      "example": {
+        "questionId": "1732417200000",
+        "answer": "Yes! Use Mongoose pre-remove hook. Check Task.js for pattern.",
+        "context": ["src/models/Task.js", "anti_patterns.json"]
+      }
+    },
+    "ai:status": {
+      "direction": "client → room",
+      "description": "AI broadcasts current status/progress",
+      "payload": {
+        "status": "Status message"
+      },
+      "example": {
+        "status": "Building Board controller with cascade delete"
+      }
+    },
+    "ai:blocker": {
+      "direction": "client → room",
+      "description": "AI reports a blocker/issue",
+      "payload": {
+        "issue": "Description of blocker",
+        "blocking": "What is being blocked"
+      },
+      "example": {
+        "issue": "Not sure about validation patterns",
+        "blocking": "Board controller implementation"
+      }
+    },
+    "ai:context-updated": {
+      "direction": "client → room",
+      "description": "AI notifies about context file update",
+      "payload": {
+        "file": "Path to context file",
+        "action": "created|updated|deleted"
+      },
+      "example": {
+        "file": "schemas/board_model.json",
+        "action": "created"
+      }
+    },
+    "ai:feature-complete": {
+      "direction": "client → room",
+      "description": "AI announces feature completion",
+      "payload": {
+        "feature": "Feature name",
+        "tests_passing": "boolean"
+      },
+      "example": {
+        "feature": "Board CRUD API",
+        "tests_passing": true
+      }
+    }
+  },
+  
+  "client_usage": {
+    "ai1_monitoring": {
+      "command": "node bin/ai1-monitor.js",
+      "purpose": "Listen for questions and auto-respond with context knowledge",
+      "auto_responses": {
+        "cascade_delete": "References Task.js pre-remove hook pattern",
+        "validation": "References taskController.js validation handling",
+        "mongodb_connection": "References anti_patterns.json for connection setup"
+      }
+    },
+    "ai2_interactive": {
+      "command": "node bin/ai2-client.js",
+      "purpose": "Interactive CLI for AI #2 to communicate during development",
+      "commands": [
+        "ask <question> - Ask AI #1 a question",
+        "status <message> - Update status",
+        "blocker <issue> - Report blocker",
+        "done <feature> - Announce completion",
+        "context <file> - Notify context update",
+        "exit - Disconnect"
+      ]
+    },
+    "demo": {
+      "command": "node bin/demo-collaboration.js",
+      "purpose": "Automated demo showing complete AI collaboration workflow",
+      "demonstrates": [
+        "AI #2 asks questions",
+        "AI #1 provides context-based answers",
+        "Blocker reporting and resolution",
+        "Context file update notifications",
+        "Feature completion announcements"
+      ]
+    }
+  },
+  
+  "implementation_flow": {
+    "server_setup": [
+      "Import socket.io and create Server instance",
+      "Wrap Express app with http.createServer()",
+      "Configure CORS for Socket.IO",
+      "Listen for 'connection' events",
+      "Handle 'join' event to add clients to ai-collaboration room",
+      "Use socket.onAny() to forward all ai:* events to room",
+      "Enrich events with from/socketId/timestamp"
+    ],
+    "client_connection": [
+      "Import socket.io-client",
+      "Connect with auth: { name: agentName }",
+      "Emit 'join' to ai-collaboration room",
+      "Set up event listeners for all ai:* events",
+      "Use colored console output (chalk) for readability"
+    ],
+    "auto_response_pattern": [
+      "Listen for ai:question events",
+      "Check question content for keywords",
+      "If match found, wait 2 seconds (simulate thinking)",
+      "Emit ai:answer with relevant context references",
+      "Log response to console with colored output"
+    ]
+  },
+  
+  "benefits_over_file_based": [
+    "Real-time communication (no polling)",
+    "Bidirectional messaging",
+    "Observable collaboration (watch in real-time)",
+    "Event-driven architecture (clean separation)",
+    "Scalable (easy to add more AIs)",
+    "Server logs all events automatically",
+    "Lower latency than git commits"
+  ],
+  
+  "testing": {
+    "demo_test": "node bin/demo-collaboration.js - Shows automated collaboration",
+    "manual_test": [
+      "Terminal 1: npm start (server)",
+      "Terminal 2: node bin/ai1-monitor.js (AI #1)",
+      "Terminal 3: node bin/ai2-client.js (AI #2)",
+      "Type 'ask Should Board deletion cascade?' in Terminal 3",
+      "Watch AI #1 auto-respond in Terminal 2"
+    ]
+  },
+  
+  "meta_insight": "The task-board project provides its own communication infrastructure for building itself - recursive architecture!",
+  
+  "next_enhancements": [
+    "Add message persistence (store in MongoDB)",
+    "Add conversation threading (link questions to answers)",
+    "Add AI #3 observer mode (logs everything to context files)",
+    "Add web UI to visualize collaboration",
+    "Add metrics (response times, question types, resolution rates)"
+  ]
+}
