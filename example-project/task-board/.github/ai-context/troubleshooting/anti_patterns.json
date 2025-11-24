@@ -1,20 +1,56 @@
 {
-  "_ai_instructions": {
-    "purpose": "Document known mistakes and correct approaches",
-    "when_to_use": "Before implementing anything - check here first",
-    "update_protocol": "Add entry whenever you discover a bug or mistake"
-  },
+  "type": "anti_patterns",
+  "description": "Common mistakes and their solutions for task-board project",
+  "version": "1.0.0",
   "last_updated": "2025-11-24",
-  "critical_never_do": [
-    "Add critical mistakes here as you discover them"
-  ],
-  "anti_patterns": {
-    "example_pattern": {
-      "wrong": "Example of incorrect approach",
-      "correct": "Example of correct approach",
-      "why_bad": "Explanation of why the wrong approach fails",
-      "discovered": "2025-11-24",
-      "example": "Code example if applicable"
+  
+  "patterns": [
+    {
+      "category": "infrastructure",
+      "wrong": "Using Docker container hostname (clubnexus-shared-mongo) from host process",
+      "right": "Use localhost with mapped port (localhost:27099) or run app in Docker network",
+      "reason": "DNS resolution: Container hostnames only resolve inside Docker networks, not from host",
+      "example": {
+        "wrong": "mongodb://clubnexus-shared-mongo:27017/taskboard",
+        "right": "mongodb://localhost:27099/taskboard (if port mapped to 27099)"
+      },
+      "error_message": "getaddrinfo EAI_AGAIN clubnexus-shared-mongo",
+      "fix": "Check port mapping with 'docker port <container>' and use localhost"
+    },
+    {
+      "category": "database",
+      "wrong": "Using shared MongoDB with authentication from dev environment",
+      "right": "Create dedicated test MongoDB container without auth for development",
+      "reason": "Production MongoDB requires credentials, dev environment needs friction-free setup",
+      "example": {
+        "setup": "docker run -d -p 27099:27017 --name taskboard-mongo mongo:latest",
+        "connection": "mongodb://localhost:27099/taskboard"
+      },
+      "when": "Local development and testing"
+    },
+    {
+      "category": "validation",
+      "wrong": "Silently failing validation without returning error details",
+      "right": "Return validation errors in response with field-level details",
+      "reason": "Client needs to know exactly what's wrong to fix the request",
+      "example": {
+        "wrong": "res.status(400).json({ error: 'Validation failed' })",
+        "right": "res.status(400).json({ error: 'Validation failed', details: ['Board ID is required', 'Column ID is required'] })"
+      },
+      "implemented_in": "src/controllers/taskController.js"
     }
-  }
+  ],
+  
+  "testing_patterns": [
+    {
+      "pattern": "Test validation first",
+      "description": "Always test validation errors before testing success cases",
+      "example": "curl with missing required fields → expect 400 with details"
+    },
+    {
+      "pattern": "Test full CRUD cycle",
+      "description": "Create → Read → Update → Delete in one workflow to verify complete functionality",
+      "example": "Store created ID, use it for subsequent operations"
+    }
+  ]
 }
