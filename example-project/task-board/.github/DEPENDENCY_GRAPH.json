@@ -1,0 +1,37 @@
+{
+  "version": "1.0.0",
+  "project": "task-board",
+  "description": "Context router for Kanban task board project",
+  "last_updated": "2025-11-24",
+  "router": {
+    "task_model": {
+      "description": "Task schema, validation, CRUD operations",
+      "load": "ai-context/schemas/task_model.json",
+      "keywords": ["task", "schema", "validation", "status", "priority"]
+    },
+    "board_model": {
+      "description": "Board schema with columns relationship",
+      "load": "ai-context/schemas/board_model.json",
+      "keywords": ["board", "column", "kanban", "organization"]
+    },
+    "task_crud_flow": {
+      "description": "Creating, reading, updating, deleting tasks",
+      "load": "ai-context/flows/task_crud.json",
+      "keywords": ["create task", "update task", "delete task", "get tasks"]
+    },
+    "api_patterns": {
+      "description": "REST API conventions, error handling, validation",
+      "load": "ai-context/flows/api_patterns.json",
+      "keywords": ["api", "rest", "endpoint", "response format", "error handling"]
+    },
+    "mistakes_to_avoid": {
+      "description": "Common errors and anti-patterns",
+      "load": "ai-context/troubleshooting/anti_patterns.json",
+      "keywords": ["error", "mistake", "bug", "fix", "wrong"]
+    }
+  },
+  "dependencies": {
+    "task_crud_flow": ["task_model", "api_patterns"],
+    "board_model": ["task_model"]
+  }
+}
