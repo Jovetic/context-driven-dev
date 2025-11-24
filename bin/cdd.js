@@ -11,7 +11,16 @@ const program = new Command();
 program
   .name('cdd')
   .description('Context-Driven Development CLI - Validate and manage AI context files')
-  .version('0.1.0');
+  .version('0.1.0')
+  .option('--no-color', 'Disable colored output (for CI/CD logs)');
+
+// Set NO_COLOR environment variable if --no-color flag is used
+program.hook('preAction', (thisCommand) => {
+  if (thisCommand.opts().noColor) {
+    process.env.NO_COLOR = '1';
+    chalk.level = 0; // Disable chalk colors globally
+  }
+});
 
 program
   .command('validate')
