@@ -1,223 +1,180 @@
-# Context-Driven Development (CDD)
+# CDD CLI - Context-Driven Development Command Line Tool
 
-> A systematic approach to AI-assisted development using structured context files
+Validation and management tool for Context-Driven Development projects.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-## 🎯 What is Context-Driven Development?
-
-**Context-Driven Development (CDD)** is a methodology for building software with AI assistance that maintains architectural consistency, accumulates knowledge, and accelerates development velocity over time.
-
-Instead of treating each AI conversation as isolated, CDD creates a **persistent knowledge base** that helps AI assistants understand your codebase instantly, remember past decisions, and avoid repeated mistakes.
-
-## 💡 The Problem
-
-**Traditional AI-Assisted Development**:
-```
-Session 1: "Build feature A" → AI generates code (fast)
-Session 2: "Build feature B" → Re-explain architecture (slower)
-Session 3: "Build feature C" → Re-explain + fix inconsistencies (slowest)
-```
-
-**Result**: Declining velocity, inconsistent patterns, repeated mistakes
-
-## ✨ The CDD Solution
-
-**Context-Driven Development**:
-```
-Session 1: AI reads context → Builds feature A → Updates context
-Session 2: AI reads updated context → Builds feature B (faster)
-Session 3: AI knows A+B patterns → Builds feature C (even faster)
-```
-
-**Result**: Increasing velocity, consistent patterns, accumulated knowledge
-
-## 🏗️ Core Architecture
-
-### Modular Context Files
-
-```
-.github/
-├── copilot-instructions.md          # Primary entry point for AI
-├── DEPENDENCY_GRAPH.json            # Router: which context to load when
-└── ai-context/
-    ├── flows/
-    │   ├── provisioning.json        # Step-by-step process flows
-    │   ├── credential_lifecycle.json
-    │   └── restart_unpause.json
-    ├── schemas/
-    │   └── database_models.json     # Data structures
-    ├── troubleshooting/
-    │   ├── decision_trees.json      # Diagnostic workflows
-    │   ├── anti_patterns.json       # Known mistakes to avoid
-    │   └── verification_commands.json
-    └── metadata/
-        └── recent_changes.json      # Change history
-```
-
-### Key Principles
-
-1. **Modular**: Load only what's needed (fast, efficient)
-2. **Routed**: DEPENDENCY_GRAPH.json tells AI which context file to use
-3. **Accumulated**: Each session adds to knowledge base
-4. **Self-Updating**: Scripts automate context maintenance
-5. **Machine-Readable**: JSON format (not just human docs)
-
-## 🚀 Real-World Results
-
-**Case Study: ClubNeXus Platform**
-- **Built**: 72,000 lines of production code
-- **Timeline**: 3 weeks
-- **Architecture**: 6 microservices, multi-tenant SaaS
-- **Outcome**: 5 live customers, stable production system
-- **Velocity**: Increasing over time (not declining)
-
-## 📚 Quick Start
-
-### 1. Copy Template Structure
+## Installation
 
 ```bash
-# Clone this repository
-git clone https://github.com/Jovetic/context-driven-dev.git
+# From the cli directory
+npm install
+npm link
 
-# Copy template to your project
-cp -r context-driven-dev/template/.github your-project/
+# Or install globally (once published)
+npm install -g @context-driven-dev/cli
 ```
 
-### 2. Customize for Your Project
+## Commands
 
-Edit `.github/copilot-instructions.md` with your:
-- Project name and description
-- Tech stack
-- Architecture decisions
-- Coding standards
+### `cdd validate [path]`
 
-### 3. Add Context Files
+Validate JSON syntax and structure of AI context files.
 
-Create context files in `.github/ai-context/`:
-- Document your workflows in `flows/`
-- Define data models in `schemas/`
-- Capture common issues in `troubleshooting/`
+```bash
+# Validate default location (.github/ai-context)
+cdd validate
 
-### 4. Start Building with Self-Improving AI
+# Validate custom path
+cdd validate ./docs/ai-context
 
-**First session**:
-```
-You: "Build authentication system"
-AI: [Reads context] → Builds feature → Documents patterns used
+# Strict mode (warnings fail build)
+cdd validate --strict
+
+# Auto-fix common issues (backup created)
+cdd validate --fix
 ```
 
-**Second session**:
-```
-AI: [Reads updated context from Session 1]
-You: "Add password reset"
-AI: Already knows auth patterns → Applies consistently → Documents new patterns
-```
+**Validates:**
+- JSON syntax errors
+- Required fields in anti_patterns.json
+- Flow documentation structure
+- DEPENDENCY_GRAPH routing rules
+- Schema definitions
 
-**Third session**:
-```
-AI: [Reads accumulated knowledge from Sessions 1+2]
-You: "Why won't users authenticate?"
-AI: Checks decision_trees.json → Diagnoses in seconds → Fixes → Updates anti-patterns
-```
+### `cdd audit [path]`
 
-**Your AI assistant will**:
-- ✅ Understand your architecture instantly (reads context)
-- ✅ Follow your coding standards (documented in context)
-- ✅ Avoid known anti-patterns (learns from past fixes)
-- ✅ Maintain consistency across sessions (accumulates knowledge)
-- ✅ **Get smarter every session** (self-updating context)
+Check for stale or outdated context entries.
 
-## 🎯 Best Practices
+```bash
+# Audit with default threshold (90 days)
+cdd audit
 
-### AI Updates Context Automatically
+# Custom staleness threshold
+cdd audit --stale-threshold 60
 
-**Critical principle**: The AI maintains its own knowledge base autonomously.
-
-**After fixing a bug**:
-```
-AI: [Detects fix was applied]
-AI: [Updates anti_patterns.json automatically]
-AI: [Commits change with description]
-You: [Review commit in git log]
+# JSON output for CI/CD
+cdd audit --format json
 ```
 
-**After building a feature**:
-```
-AI: [Recognizes new pattern created]
-AI: [Documents in flows/*.json]
-AI: [Commits update]
-You: [Nothing - or review if you want]
-```
+**Checks:**
+- `last_updated` timestamps
+- Individual entry dates (like recent_changes)
+- Reports entries older than threshold
 
-**Next session starts**:
-```
-AI: [Checks recently changed files]
-AI: [Reads updated context]
-AI: [Already knows new patterns and anti-patterns]
-You: "Build next feature"
-AI: [Applies accumulated knowledge immediately]
-```
+### `cdd analyze-gaps [path]`
 
-**You never say "update the docs"** - AI does it proactively.
+Identify missing documentation based on codebase analysis.
 
-### The Self-Improving Loop (Fully Autonomous)
+```bash
+# Analyze current project
+cdd analyze-gaps
 
-1. **Session starts** → AI checks `git log` for recent changes
-2. **AI reads updated context** (copilot-instructions.md + relevant JSON files)
-3. **You work together** (build features, fix bugs)
-4. **AI proactively documents** (detects patterns, updates context files)
-5. **AI commits changes** (descriptive messages, proper attribution)
-6. **Session ends** → Knowledge preserved
-7. **Next session** → Repeat from step 1 with MORE knowledge
-
-**Critical**: You don't instruct AI to update docs. AI recognizes:
-- "We just fixed credential injection bug" → Updates `anti_patterns.json`
-- "We implemented new auth flow" → Updates `flows/authentication.json`
-- "We changed database schema" → Updates `schemas/database_models.json`
-
-**Result**: AI gets smarter every session WITHOUT manual documentation work
-
-### Version Control Is Critical
-
-All context updates go through git:
-- Review AI's context changes like code review
-- See what knowledge was added when
-- Revert if AI documented something incorrectly
-- Track architectural evolution over time
-
-## 📖 Documentation
-
-- **[Implementation Guide](docs/IMPLEMENTATION_GUIDE.md)** - Detailed setup instructions
-- **[Context File Reference](docs/CONTEXT_FILE_REFERENCE.md)** - Complete file format specs
-- **[Why CDD Works](docs/WHY_CDD.md)** - Theoretical foundation
-- **[Case Study: ClubNeXus](docs/CASE_STUDY_CLUBNEXUS.md)** - Real-world example
-- **[FAQ](docs/FAQ.md)** - Common questions
-
-## 🤝 Contributing
-
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
-## 🙏 Citation
-
-If you use Context-Driven Development, please cite:
-
-```bibtex
-@misc{jovetic2025cdd,
-  author = {Christian Jovetic},
-  title = {Context-Driven Development: Systematic AI-Assisted Development},
-  year = {2025},
-  publisher = {GitHub},
-  url = {https://github.com/Jovetic/context-driven-dev}
-}
+# With suggestions
+cdd analyze-gaps --suggest
 ```
 
----
+**Detects:**
+- Missing .github/ai-context directory
+- Missing critical files (DEPENDENCY_GRAPH.json, anti_patterns.json)
+- Undocumented component types (services, models, controllers)
+- Gaps between code and context coverage
 
-**Created by**: [Christian Jovetic](https://github.com/Jovetic)  
-**First Implementation**: ClubNeXus Platform (November 2025)  
-**Status**: Production-tested methodology
+## Usage in CI/CD
+
+### GitHub Actions
+
+```yaml
+name: Validate Context
+
+on: [pull_request]
+
+jobs:
+  validate-cdd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm install -g @context-driven-dev/cli
+      - run: cdd validate --strict
+      - run: cdd audit --stale-threshold 90
+```
+
+### Pre-commit Hook
+
+```bash
+#!/bin/bash
+# .git/hooks/pre-commit
+
+if ! cdd validate .github/ai-context; then
+  echo "❌ Context validation failed"
+  exit 1
+fi
+```
+
+## Exit Codes
+
+- `0` - Success
+- `1` - Validation errors or stale entries found
+
+## Examples
+
+**Successful validation:**
+```
+$ cdd validate
+✔ Scanning for context files... (12 files)
+✔ .github/ai-context/troubleshooting/anti_patterns.json
+✔ .github/ai-context/flows/provisioning.json
+✔ .github/ai-context/DEPENDENCY_GRAPH.json
+
+Summary:
+  Files validated: 12
+  Errors: 0
+  Warnings: 0
+```
+
+**Validation with warnings:**
+```
+$ cdd validate
+✔ Scanning for context files... (12 files)
+✔ .github/ai-context/troubleshooting/anti_patterns.json
+✗ .github/ai-context/flows/new_feature.json
+  ⚠ Missing "_ai_instructions.purpose"
+  ⚠ Missing "last_updated" timestamp
+
+Summary:
+  Files validated: 12
+  Errors: 0
+  Warnings: 2
+```
+
+**Audit findings:**
+```
+$ cdd audit --stale-threshold 60
+✔ Audit complete: 3 stale entries found
+
+⚠ Found 3 stale entries (>60 days old):
+
+  .github/ai-context/metadata/recent_changes.json (entry 5)
+    Last updated: 2025-08-15 (98 days ago)
+    Title: Old feature implementation
+
+💡 Tip: Review these entries and update or archive as needed.
+```
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Watch mode
+npm run test:watch
+```
+
+## License
+
+MIT

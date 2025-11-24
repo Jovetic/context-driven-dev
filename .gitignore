@@ -17,3 +17,7 @@ logs/
 tmp/
 temp/
 *.tmp
+
+# CLI dependencies
+node_modules/
+package-lock.json
