@@ -130,33 +130,53 @@ AI: Checks decision_trees.json → Diagnoses in seconds → Fixes → Updates an
 
 ## 🎯 Best Practices
 
-### AI Updates Context, Not You
+### AI Updates Context Automatically
 
-**Critical principle**: The AI maintains its own knowledge base.
+**Critical principle**: The AI maintains its own knowledge base autonomously.
 
 **After fixing a bug**:
 ```
-You: "Great! Now update anti_patterns.json with what we just fixed"
-AI: [Adds entry] → [Commits change] → Done
+AI: [Detects fix was applied]
+AI: [Updates anti_patterns.json automatically]
+AI: [Commits change with description]
+You: [Review commit in git log]
 ```
 
 **After building a feature**:
 ```
-You: "Document this implementation flow for next time"
-AI: [Creates/updates flow JSON] → [Commits] → Done
+AI: [Recognizes new pattern created]
+AI: [Documents in flows/*.json]
+AI: [Commits update]
+You: [Nothing - or review if you want]
 ```
 
-**Next session**: AI reads updated context → Already knows these patterns
+**Next session starts**:
+```
+AI: [Checks recently changed files]
+AI: [Reads updated context]
+AI: [Already knows new patterns and anti-patterns]
+You: "Build next feature"
+AI: [Applies accumulated knowledge immediately]
+```
 
-### The Self-Improving Loop
+**You never say "update the docs"** - AI does it proactively.
 
-1. **AI reads context** (on session start)
-2. **You work together** (build features, fix bugs)
-3. **AI documents learnings** (updates context files)
-4. **AI commits changes** (git log shows knowledge growth)
-5. **Next session starts at step 1** (with accumulated knowledge)
+### The Self-Improving Loop (Fully Autonomous)
 
-**Result**: AI gets smarter every session, you never explain the same thing twice
+1. **Session starts** → AI checks `git log` for recent changes
+2. **AI reads updated context** (copilot-instructions.md + relevant JSON files)
+3. **You work together** (build features, fix bugs)
+4. **AI proactively documents** (detects patterns, updates context files)
+5. **AI commits changes** (descriptive messages, proper attribution)
+6. **Session ends** → Knowledge preserved
+7. **Next session** → Repeat from step 1 with MORE knowledge
+
+**Critical**: You don't instruct AI to update docs. AI recognizes:
+- "We just fixed credential injection bug" → Updates `anti_patterns.json`
+- "We implemented new auth flow" → Updates `flows/authentication.json`
+- "We changed database schema" → Updates `schemas/database_models.json`
+
+**Result**: AI gets smarter every session WITHOUT manual documentation work
 
 ### Version Control Is Critical
 
