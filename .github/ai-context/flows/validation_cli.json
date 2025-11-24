@@ -1,0 +1,313 @@
+{
+  "_ai_instructions": {
+    "purpose": "CDD CLI validation tool architecture - how the tool works and how to extend it",
+    "when_to_use": "Adding new validators, commands, or understanding validation logic",
+    "built_using": "Context-Driven Development methodology on itself (meta!)",
+    "related_files": [
+      "bin/cdd.js",
+      "src/commands/",
+      "src/validators/",
+      "README.md"
+    ]
+  },
+  "last_updated": "2025-11-24",
+  "overview": {
+    "name": "@context-driven-dev/cli",
+    "purpose": "Validate and manage Context-Driven Development files",
+    "version": "0.1.0",
+    "license": "MIT",
+    "tech_stack": {
+      "runtime": "Node.js 18+",
+      "cli_framework": "Commander.js",
+      "output_styling": "Chalk (colors), Ora (spinners)",
+      "file_globbing": "glob",
+      "module_system": "ES modules (type: module)"
+    }
+  },
+  "commands": {
+    "validate": {
+      "signature": "cdd validate [path] [--strict] [--fix]",
+      "purpose": "Validate JSON syntax and structure of AI context files",
+      "default_path": ".github/ai-context",
+      "options": {
+        "strict": "Treat warnings as errors (fail build)",
+        "fix": "Auto-fix common issues with backup"
+      },
+      "workflow": [
+        "Scan for JSON files using glob pattern",
+        "Parse each JSON file",
+        "Determine file type (anti_patterns, flows, schemas, dependency_graph)",
+        "Run type-specific validator",
+        "Collect errors and warnings",
+        "Display results with color coding",
+        "Exit code 0 (success) or 1 (errors)"
+      ],
+      "implementation": "src/commands/validate.js"
+    },
+    "audit": {
+      "signature": "cdd audit [path] [--stale-threshold <days>] [--format <format>]",
+      "purpose": "Check for stale or outdated context entries",
+      "default_threshold": "90 days",
+      "checks": [
+        "last_updated timestamp in file root",
+        "Individual entry dates (e.g., recent_changes[])",
+        "Compares against current date minus threshold"
+      ],
+      "output_formats": ["table", "json"],
+      "workflow": [
+        "Scan for JSON files",
+        "Parse each file",
+        "Check last_updated field",
+        "Check individual entry dates (arrays)",
+        "Calculate days old",
+        "Report entries exceeding threshold",
+        "Suggest review/update actions"
+      ],
+      "implementation": "src/commands/audit.js"
+    },
+    "analyze-gaps": {
+      "signature": "cdd analyze-gaps [path] [--suggest]",
+      "purpose": "Identify missing documentation based on codebase analysis",
+      "checks": [
+        "ai-context directory exists",
+        "Critical files present (DEPENDENCY_GRAPH.json, anti_patterns.json)",
+        "Component types documented (services, models, controllers)",
+        "Coverage gaps between code and context"
+      ],
+      "workflow": [
+        "Scan source files (src/, lib/)",
+        "Extract component types",
+        "Check if ai-context directory exists",
+        "Verify critical files present",
+        "Compare source components vs documented flows",
+        "Report gaps with severity (high/medium)",
+        "Suggest specific actions to fill gaps"
+      ],
+      "implementation": "src/commands/analyze-gaps.js"
+    }
+  },
+  "validators": {
+    "anti_patterns": {
+      "file": "src/validators/anti-patterns.js",
+      "checks": {
+        "required_structure": {
+          "anti_patterns": "object - main container",
+          "critical_never_do": "array - summary list"
+        },
+        "per_pattern": {
+          "wrong": "string - what not to do (REQUIRED)",
+          "correct": "string - what to do instead (REQUIRED)",
+          "why_bad": "string - explanation (RECOMMENDED)",
+          "impact": "string - consequences (RECOMMENDED)",
+          "discovered": "string - date discovered (RECOMMENDED for historical context)"
+        }
+      },
+      "warnings": [
+        "Missing critical_never_do array",
+        "No anti-patterns defined",
+        "Pattern missing why_bad or impact",
+        "Pattern missing discovered date"
+      ],
+      "errors": [
+        "Missing anti_patterns object",
+        "Pattern missing wrong field",
+        "Pattern missing correct field"
+      ]
+    },
+    "flows": {
+      "file": "src/validators/flows.js",
+      "checks": {
+        "_ai_instructions": {
+          "purpose": "string - what this flow documents",
+          "when_to_use": "string - when AI should load this"
+        },
+        "flow_steps": "array with step/phase identifiers and descriptions",
+        "last_updated": "string - timestamp for staleness tracking"
+      },
+      "warnings": [
+        "Missing _ai_instructions metadata",
+        "Missing _ai_instructions.purpose",
+        "Missing _ai_instructions.when_to_use",
+        "Flow step missing step/phase identifier",
+        "Flow step missing description/action",
+        "Missing last_updated timestamp"
+      ],
+      "flexible": "Flow structure varies - warnings only, no hard errors"
+    },
+    "schemas": {
+      "file": "src/validators/schemas.js",
+      "checks": {
+        "_ai_instructions": "metadata about schema documentation",
+        "schema_definitions": "models, schemas, or schema key expected"
+      },
+      "warnings": [
+        "Missing _ai_instructions",
+        "No schema definitions found"
+      ],
+      "flexible": "Schema format varies widely - light validation"
+    },
+    "dependency_graph": {
+      "file": "src/validators/dependency-graph.js",
+      "checks": {
+        "routing_rules": "object mapping questions to context files",
+        "per_route": {
+          "file_or_files": "string or array - target context file(s)",
+          "keywords": "array - matching keywords (RECOMMENDED)",
+          "description": "string - route explanation (RECOMMENDED)"
+        }
+      },
+      "errors": [
+        "Missing routing_rules or routes",
+        "Route missing target file(s)"
+      ],
+      "warnings": [
+        "Route missing keywords or description"
+      ]
+    }
+  },
+  "architecture": {
+    "entry_point": "bin/cdd.js",
+    "structure": {
+      "bin/cdd.js": "CLI entry point - Commander.js program definition",
+      "src/commands/": "Command implementations (validate, audit, analyze-gaps)",
+      "src/validators/": "Type-specific validation logic",
+      "src/utils/": "Shared utilities (future: backup, fix, reporting)",
+      "test/": "Unit tests (future: Jest test suites)"
+    },
+    "module_system": "ES modules - import/export syntax",
+    "error_handling": {
+      "pattern": "try/catch in commands, return {valid, errors, warnings} from validators",
+      "exit_codes": {
+        "0": "Success",
+        "1": "Validation errors or failures"
+      }
+    },
+    "output_styling": {
+      "spinners": "ora for progress indication",
+      "colors": "chalk for color coding (green=success, red=error, yellow=warning, cyan=info)",
+      "symbols": "✓ ✗ ⚠ 💡 for visual clarity"
+    }
+  },
+  "extension_patterns": {
+    "adding_new_validator": {
+      "steps": [
+        "Create src/validators/new-type.js",
+        "Export function: export function validateNewType(data, file) { return {valid, errors, warnings}; }",
+        "Import in src/commands/validate.js",
+        "Add conditional check: if (file.includes('new-type')) { result = validateNewType(data, file); }"
+      ],
+      "example": "src/validators/anti-patterns.js"
+    },
+    "adding_new_command": {
+      "steps": [
+        "Create src/commands/new-command.js",
+        "Export async function: export async function newCommand(path, options) { ... }",
+        "Import in bin/cdd.js",
+        "Add Commander.js definition: program.command('new-command').action(newCommand)"
+      ],
+      "example": "src/commands/audit.js"
+    },
+    "adding_auto_fix": {
+      "pattern": "Backup original → Detect issue → Apply fix → Validate result → Report changes",
+      "future_feature": "Planned for --fix flag",
+      "use_cases": [
+        "Add missing _ai_instructions",
+        "Update last_updated to current date",
+        "Format JSON with consistent indentation"
+      ]
+    }
+  },
+  "testing_strategy": {
+    "unit_tests": {
+      "framework": "Jest with ES modules (--experimental-vm-modules)",
+      "location": "test/",
+      "coverage": [
+        "Each validator function",
+        "Command argument parsing",
+        "Error handling paths"
+      ]
+    },
+    "integration_tests": {
+      "method": "Run on real repositories (ClubNeXus, context-driven-dev itself)",
+      "verified": "2025-11-24 - ClubNeXus: 12 files, 0 errors, 0 warnings"
+    },
+    "dogfooding": "Use cdd validate on this repo before each commit (pre-commit hook)"
+  },
+  "ci_cd_integration": {
+    "github_actions": {
+      "workflow": ".github/workflows/validate-context.yml",
+      "steps": [
+        "Checkout code",
+        "Setup Node.js",
+        "Install CLI: npm install -g @context-driven-dev/cli",
+        "Run: cdd validate --strict",
+        "Run: cdd audit --stale-threshold 90"
+      ],
+      "trigger": "pull_request, push to main"
+    },
+    "pre_commit_hook": {
+      "script": ".git/hooks/pre-commit",
+      "command": "cdd validate .github/ai-context",
+      "exit_on_error": true
+    }
+  },
+  "future_enhancements": {
+    "priority_high": [
+      "Auto-fix implementation (--fix flag)",
+      "JSON schema definitions for each context file type",
+      "Better error messages with line numbers",
+      "Colored diff output for suggested fixes"
+    ],
+    "priority_medium": [
+      "Watch mode (continuous validation)",
+      "Interactive CLI (select which fixes to apply)",
+      "Export validation report to file (JSON, HTML)",
+      "Custom validation rules (user-defined schemas)"
+    ],
+    "priority_low": [
+      "VS Code extension integration",
+      "Language server protocol (LSP) for real-time validation",
+      "Suggested context updates based on git commits",
+      "AI-powered gap analysis (OpenAI API integration)"
+    ]
+  },
+  "meta_lessons": {
+    "built_with_cdd": "This CLI was built using the Context-Driven Development methodology it validates",
+    "self_documenting": "This file documents the tool that validates this file (meta loop!)",
+    "compounding_effect": "Tool improves CDD → CDD improves tool building → Better tools faster",
+    "autonomous_maintenance": "AI should update this file when CLI changes (autonomous protocol test)",
+    "dogfooding_works": "Using the methodology on itself reveals gaps and validates approach"
+  },
+  "installation": {
+    "from_source": [
+      "cd /path/to/context-driven-dev",
+      "npm install",
+      "npm link (creates global cdd command)"
+    ],
+    "from_npm": [
+      "npm install -g @context-driven-dev/cli (when published)"
+    ],
+    "verification": [
+      "cdd --version",
+      "cdd --help",
+      "cdd validate (test on current project)"
+    ]
+  },
+  "common_issues": {
+    "json_parse_errors": {
+      "symptom": "JSON Parse Error in output",
+      "cause": "Invalid JSON syntax (trailing commas, missing quotes, etc.)",
+      "fix": "Use JSON linter or cdd validate to identify line number"
+    },
+    "no_files_found": {
+      "symptom": "Found 0 context files",
+      "cause": "Incorrect path or ai-context not initialized",
+      "fix": "Verify path: cdd validate /correct/path/to/ai-context"
+    },
+    "warnings_in_strict_mode": {
+      "symptom": "Exit code 1 even though warnings only",
+      "cause": "--strict flag treats warnings as errors",
+      "fix": "Fix warnings or remove --strict flag"
+    }
+  }
+}
