@@ -99,30 +99,72 @@ Create context files in `.github/ai-context/`:
 - Define data models in `schemas/`
 - Capture common issues in `troubleshooting/`
 
-### 4. Start Building
+### 4. Start Building with Self-Improving AI
 
-Your AI assistant will now:
-- ✅ Understand your architecture instantly
-- ✅ Follow your coding standards
-- ✅ Avoid known anti-patterns
-- ✅ Maintain consistency across sessions
+**First session**:
+```
+You: "Build authentication system"
+AI: [Reads context] → Builds feature → Documents patterns used
+```
+
+**Second session**:
+```
+AI: [Reads updated context from Session 1]
+You: "Add password reset"
+AI: Already knows auth patterns → Applies consistently → Documents new patterns
+```
+
+**Third session**:
+```
+AI: [Reads accumulated knowledge from Sessions 1+2]
+You: "Why won't users authenticate?"
+AI: Checks decision_trees.json → Diagnoses in seconds → Fixes → Updates anti-patterns
+```
+
+**Your AI assistant will**:
+- ✅ Understand your architecture instantly (reads context)
+- ✅ Follow your coding standards (documented in context)
+- ✅ Avoid known anti-patterns (learns from past fixes)
+- ✅ Maintain consistency across sessions (accumulates knowledge)
+- ✅ **Get smarter every session** (self-updating context)
 
 ## 🎯 Best Practices
 
-### Load Context First
-Always instruct AI to read context files before coding
+### AI Updates Context, Not You
 
-### Update After Fixes
-Document bugs as anti-patterns to prevent recurrence
+**Critical principle**: The AI maintains its own knowledge base.
 
-### Use Decision Trees
-Create diagnostic workflows for complex troubleshooting
+**After fixing a bug**:
+```
+You: "Great! Now update anti_patterns.json with what we just fixed"
+AI: [Adds entry] → [Commits change] → Done
+```
 
-### Keep Context Modular
-Split by domain, not one giant file
+**After building a feature**:
+```
+You: "Document this implementation flow for next time"
+AI: [Creates/updates flow JSON] → [Commits] → Done
+```
 
-### Version Control Everything
-Track context changes in git
+**Next session**: AI reads updated context → Already knows these patterns
+
+### The Self-Improving Loop
+
+1. **AI reads context** (on session start)
+2. **You work together** (build features, fix bugs)
+3. **AI documents learnings** (updates context files)
+4. **AI commits changes** (git log shows knowledge growth)
+5. **Next session starts at step 1** (with accumulated knowledge)
+
+**Result**: AI gets smarter every session, you never explain the same thing twice
+
+### Version Control Is Critical
+
+All context updates go through git:
+- Review AI's context changes like code review
+- See what knowledge was added when
+- Revert if AI documented something incorrectly
+- Track architectural evolution over time
 
 ## 📖 Documentation
 
