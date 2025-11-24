@@ -1,0 +1,43 @@
+{
+  "last_updated": "2025-11-24",
+  "category": "flows",
+  "description": "Step-by-step process for implementing features",
+  "flow_name": "Example Feature Implementation",
+  "steps": [
+    {
+      "step": 1,
+      "title": "Create Model",
+      "description": "Define database schema",
+      "files": ["src/models/Example.js"],
+      "code_example": "const schema = new Schema({...});"
+    },
+    {
+      "step": 2,
+      "title": "Create Controller",
+      "description": "Business logic",
+      "files": ["src/controllers/exampleController.js"],
+      "code_example": "async function handleExample(req, res) {...}"
+    },
+    {
+      "step": 3,
+      "title": "Add Route",
+      "description": "API endpoint",
+      "files": ["src/routes/example.js"],
+      "code_example": "router.get('/example', handleExample);"
+    },
+    {
+      "step": 4,
+      "title": "Test",
+      "description": "Verify functionality",
+      "commands": ["npm test"],
+      "verification": "Should return 200 with expected data"
+    }
+  ],
+  "dependencies": ["Database connection", "Authentication middleware"],
+  "common_issues": [
+    {
+      "issue": "Route not found",
+      "solution": "Ensure route is registered in main app"
+    }
+  ]
+}

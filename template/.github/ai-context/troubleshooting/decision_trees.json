@@ -1,0 +1,28 @@
+{
+  "last_updated": "2025-11-24",
+  "category": "troubleshooting",
+  "description": "Diagnostic workflows for common issues",
+  "decision_trees": {
+    "example_issue": {
+      "symptom": "Description of the problem",
+      "diagnosis_steps": [
+        "Step 1: Check condition X",
+        "Step 2: Verify setting Y",
+        "Step 3: Test component Z"
+      ],
+      "solutions": [
+        {
+          "condition": "If X is true",
+          "action": "Do this",
+          "command": "run this command"
+        },
+        {
+          "condition": "If Y is misconfigured",
+          "action": "Do that",
+          "command": "run that command"
+        }
+      ],
+      "verification": "How to verify the fix worked"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "last_updated": "2025-11-24",
+  "category": "troubleshooting",
+  "description": "Common mistakes and their correct solutions",
+  "anti_patterns": [
+    {
+      "category": "example_category",
+      "wrong": "Incorrect approach description",
+      "right": "Correct approach description",
+      "reason": "Why the wrong approach causes problems",
+      "example_wrong": "code example of wrong approach",
+      "example_right": "code example of right approach"
+    }
+  ],
+  "update_protocol": "When you fix a bug, add the mistake here to prevent recurrence"
+}

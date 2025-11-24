@@ -1,0 +1,27 @@
+{
+  "last_updated": "2025-11-24",
+  "category": "troubleshooting",
+  "description": "Commands to verify system state",
+  "verification_commands": {
+    "service_health": {
+      "description": "Check if services are running",
+      "commands": [
+        {
+          "command": "docker ps",
+          "expected": "All containers showing 'Up'",
+          "failure_action": "Check docker logs [container]"
+        }
+      ]
+    },
+    "database_connectivity": {
+      "description": "Verify database is accessible",
+      "commands": [
+        {
+          "command": "pg_isready -h localhost",
+          "expected": "accepting connections",
+          "failure_action": "Check database service status"
+        }
+      ]
+    }
+  }
+}

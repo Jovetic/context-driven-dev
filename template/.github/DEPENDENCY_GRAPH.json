@@ -1,0 +1,39 @@
+{
+  "last_updated": "2025-11-24",
+  "version": "1.0.0",
+  "description": "Routes user questions to appropriate context files",
+  "context_router": {
+    "feature_implementation": {
+      "patterns": ["how to implement", "build feature", "add functionality"],
+      "load": "ai-context/flows/feature_template.json",
+      "description": "Step-by-step implementation guides"
+    },
+    "database_schema": {
+      "patterns": ["database structure", "model schema", "data relationships"],
+      "load": "ai-context/schemas/database_models.json",
+      "description": "Complete database architecture"
+    },
+    "troubleshooting": {
+      "patterns": ["error", "broken", "not working", "fails"],
+      "load": "ai-context/troubleshooting/decision_trees.json",
+      "description": "Diagnostic workflows for common issues"
+    },
+    "anti_patterns": {
+      "patterns": ["avoid", "don't do", "mistake", "wrong way"],
+      "load": "ai-context/troubleshooting/anti_patterns.json",
+      "description": "Known mistakes and correct approaches"
+    },
+    "recent_changes": {
+      "patterns": ["what changed", "recent updates", "latest fixes"],
+      "load": "ai-context/metadata/recent_changes.json",
+      "description": "Change history and recent decisions"
+    }
+  },
+  "priority_order": [
+    "Always check anti_patterns first to avoid known mistakes",
+    "Load relevant flow for implementation guidance",
+    "Reference schemas for data structure questions",
+    "Use decision trees for debugging",
+    "Check recent_changes for context on latest work"
+  ]
+}

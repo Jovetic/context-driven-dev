@@ -1,0 +1,22 @@
+{
+  "last_updated": "2025-11-24",
+  "category": "metadata",
+  "description": "Recent changes and decisions",
+  "changes": [
+    {
+      "date": "2025-11-24",
+      "type": "feature",
+      "description": "Added example feature",
+      "files_changed": ["src/controllers/example.js"],
+      "breaking_changes": false
+    }
+  ],
+  "recent_decisions": [
+    {
+      "date": "2025-11-24",
+      "decision": "Use JWT for authentication",
+      "reason": "Stateless, scales better than sessions",
+      "impact": "All API routes require authentication"
+    }
+  ]
+}

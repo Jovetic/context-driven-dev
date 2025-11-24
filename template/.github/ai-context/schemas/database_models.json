@@ -1,0 +1,34 @@
+{
+  "last_updated": "2025-11-24",
+  "category": "schemas",
+  "description": "Database models and relationships",
+  "models": {
+    "ExampleModel": {
+      "collection": "examples",
+      "description": "Purpose of this model",
+      "schema": {
+        "field1": {
+          "type": "String",
+          "required": true,
+          "description": "What this field represents"
+        },
+        "field2": {
+          "type": "Number",
+          "default": 0,
+          "description": "What this field tracks"
+        },
+        "relations": {
+          "hasMany": ["OtherModel"],
+          "belongsTo": ["ParentModel"]
+        }
+      },
+      "indexes": [
+        {"field": "field1", "unique": true}
+      ],
+      "common_queries": [
+        "Model.find({ field1: value })",
+        "Model.aggregate([...])"
+      ]
+    }
+  }
+}
