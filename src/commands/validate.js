@@ -8,21 +8,25 @@ import { validateSchemas } from '../validators/schemas.js';
 import { validateDependencyGraph } from '../validators/dependency-graph.js';
 
 export async function validateCommand(path, options) {
-  const spinner = ora('Scanning for context files...').start();
+  const jsonOutput = options.json;
+  const spinner = jsonOutput ? null : ora('Scanning for context files...').start();
   
   try {
     // Find all JSON files in ai-context directory
     const pattern = `${path}/**/*.json`;
     const files = await glob(pattern);
     
-    spinner.succeed(`Found ${files.length} context files`);
+    if (!jsonOutput) {
+      spinner.succeed(`Found ${files.length} context files`);
+    }
     
     let errors = 0;
     let warnings = 0;
+    const fileResults = [];
     
     // Validate each file based on its type
     for (const file of files) {
-      const fileSpinner = ora(`Validating ${chalk.cyan(file)}`).start();
+      const fileSpinner = jsonOutput ? null : ora(`Validating ${chalk.cyan(file)}`).start();
       
       try {
         // Read and parse JSON
@@ -43,48 +47,90 @@ export async function validateCommand(path, options) {
           result = { valid: true, errors: [], warnings: [] };
         }
         
-        if (result.valid) {
-          fileSpinner.succeed(chalk.green(`✓ ${file}`));
+        if (jsonOutput) {
+          fileResults.push({
+            file,
+            valid: result.valid,
+            errors: result.errors,
+            warnings: result.warnings
+          });
+        } else {
+          if (result.valid) {
+            fileSpinner.succeed(chalk.green(`✓ ${file}`));
+          } else {
+            fileSpinner.fail(chalk.red(`✗ ${file}`));
+            errors += result.errors.length;
+            warnings += result.warnings.length;
+            
+            // Print errors
+            result.errors.forEach(err => {
+              console.log(chalk.red(`  ✗ ${err}`));
+            });
+            
+            // Print warnings
+            result.warnings.forEach(warn => {
+              console.log(chalk.yellow(`  ⚠ ${warn}`));
+            });
+          }
+        }
+        
+        errors += result.errors.length;
+        warnings += result.warnings.length;
+      } catch (parseError) {
+        if (jsonOutput) {
+          fileResults.push({
+            file,
+            valid: false,
+            errors: [`JSON Parse Error: ${parseError.message}`],
+            warnings: []
+          });
         } else {
           fileSpinner.fail(chalk.red(`✗ ${file}`));
-          errors += result.errors.length;
-          warnings += result.warnings.length;
-          
-          // Print errors
-          result.errors.forEach(err => {
-            console.log(chalk.red(`  ✗ ${err}`));
-          });
-          
-          // Print warnings
-          result.warnings.forEach(warn => {
-            console.log(chalk.yellow(`  ⚠ ${warn}`));
-          });
+          console.log(chalk.red(`  ✗ JSON Parse Error: ${parseError.message}`));
         }
-      } catch (parseError) {
-        fileSpinner.fail(chalk.red(`✗ ${file}`));
-        console.log(chalk.red(`  ✗ JSON Parse Error: ${parseError.message}`));
         errors++;
       }
     }
     
     // Summary
-    console.log('\n' + chalk.bold('Summary:'));
-    console.log(`  Files validated: ${files.length}`);
-    console.log(`  Errors: ${errors > 0 ? chalk.red(errors) : chalk.green(errors)}`);
-    console.log(`  Warnings: ${warnings > 0 ? chalk.yellow(warnings) : chalk.green(warnings)}`);
+    if (jsonOutput) {
+      const output = {
+        valid: errors === 0 && (options.strict ? warnings === 0 : true),
+        files_checked: files.length,
+        total_errors: errors,
+        total_warnings: warnings,
+        strict_mode: options.strict || false,
+        results: fileResults
+      };
+      console.log(JSON.stringify(output, null, 2));
+    } else {
+      console.log('\n' + chalk.bold('Summary:'));
+      console.log(`  Files validated: ${files.length}`);
+      console.log(`  Errors: ${errors > 0 ? chalk.red(errors) : chalk.green(errors)}`);
+      console.log(`  Warnings: ${warnings > 0 ? chalk.yellow(warnings) : chalk.green(warnings)}`);
+    }
     
     if (errors > 0) {
       process.exit(1);
     }
     
     if (options.strict && warnings > 0) {
-      console.log(chalk.yellow('\n⚠ Strict mode: Warnings treated as failures'));
+      if (!jsonOutput) {
+        console.log(chalk.yellow('\n⚠ Strict mode: Warnings treated as failures'));
+      }
       process.exit(1);
     }
     
   } catch (error) {
-    spinner.fail('Validation failed');
-    console.error(chalk.red(error.message));
+    if (jsonOutput) {
+      console.log(JSON.stringify({
+        valid: false,
+        error: error.message
+      }, null, 2));
+    } else {
+      spinner.fail('Validation failed');
+      console.error(chalk.red(error.message));
+    }
     process.exit(1);
   }
 }

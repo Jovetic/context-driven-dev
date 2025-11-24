@@ -19,6 +19,7 @@ program
   .argument('[path]', 'Path to ai-context directory', '.github/ai-context')
   .option('--strict', 'Enable strict validation (fail on warnings)')
   .option('--fix', 'Auto-fix common issues (backup created)')
+  .option('--json', 'Output results in JSON format')
   .action(validateCommand);
 
 program
