@@ -87,3 +87,70 @@ Many teams report faster human onboarding with CDD docs.
 **A:** Yes! CDD is MIT licensed. Build whatever you want, commercially or otherwise.
 
 The methodology helps you build faster. What you build is yours.
+
+## Autonomous Context Maintenance
+
+### Q: How do I test if the autonomous protocol is working?
+**A:** The autonomous protocol (where AI updates context without prompting) requires proper initialization:
+
+**Method 1: Generate Instructions Button**
+1. In VS Code/Cursor, click the ✨ **Generate Instructions** button (sparkle icon)
+2. This forces AI to re-read `.github/copilot-instructions.md` fresh
+3. Give AI a task (fix bug, implement feature)
+4. Watch for autonomous context updates without asking
+
+**Method 2: New Chat Session**
+1. End current session completely
+2. Start fresh chat
+3. First message: AI should reference the autonomous protocol
+4. Complete a task
+5. AI should detect context-worthy event and update files
+
+**What to Look For:**
+```
+✅ AI completes task (bug fix, feature)
+✅ AI autonomously detects "this is worth documenting"
+✅ AI updates relevant context file (anti_patterns.json, flows/*.json)
+✅ AI commits with message: "docs(ai-context): [what learned]"
+✅ AI announces: "Updated [file] with [learning]"
+```
+
+**Common Issue:** If AI doesn't update context automatically, the autonomous protocol may not be active in current session. Use Generate Instructions to reload.
+
+### Q: Does autonomous maintenance work in all AI assistants?
+**A:** Depends on the assistant's capabilities:
+- ✅ **GitHub Copilot**: Yes, reads copilot-instructions.md on session start
+- ✅ **Cursor IDE**: Yes, supports instruction files
+- ⚠️ **Claude/ChatGPT**: Semi-autonomous - requires "Generate Instructions" trigger
+- ❌ **Basic autocomplete**: No autonomous capabilities
+
+**Key insight**: The protocol works best with AI assistants that can:
+1. Read project files proactively
+2. Execute git commands
+3. Persist across multiple turns in conversation
+
+### Q: How do I verify context updates are correct?
+**A:** Use git for review:
+```bash
+# See what AI changed
+git log .github/ai-context/ --oneline
+
+# Review specific update
+git show <commit-hash>
+
+# Undo incorrect update
+git revert <commit-hash>
+```
+
+**Philosophy**: Over-document by default, review via git. Easier to revert bad updates than miss good ones.
+
+### Q: What if AI updates context too aggressively?
+**A:** Adjust the autonomous protocol instructions:
+```markdown
+## Update Triggers (in copilot-instructions.md)
+- Critical bugs only (not minor fixes)
+- Major features only (not small tweaks)
+- Architectural decisions only (not implementation details)
+```
+
+Customize the threshold to match your project's needs.
