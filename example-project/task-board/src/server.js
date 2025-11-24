@@ -3,6 +3,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import taskRoutes from './routes/tasks.js';
+import boardRoutes from './routes/boards.js';
+import columnRoutes from './routes/columns.js';
 
 dotenv.config();
 
@@ -24,7 +26,9 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
-app.use('/api', taskRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/boards', boardRoutes);
+app.use('/api/columns', columnRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -50,7 +54,10 @@ mongoose.connect(process.env.MONGODB_URI)
     app.listen(PORT, () => {
       console.log(`✓ Server running on http://localhost:${PORT}`);
       console.log(`✓ Health check: http://localhost:${PORT}/health`);
-      console.log(`✓ API endpoints: http://localhost:${PORT}/api/tasks`);
+      console.log(`✓ API endpoints:`);
+      console.log(`  - http://localhost:${PORT}/api/tasks`);
+      console.log(`  - http://localhost:${PORT}/api/boards`);
+      console.log(`  - http://localhost:${PORT}/api/columns`);
     });
   })
   .catch(err => {

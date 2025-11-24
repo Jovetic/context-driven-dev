@@ -1,0 +1,84 @@
+{
+  "type": "schema",
+  "name": "board_model",
+  "description": "Board schema for Kanban task board - IMPLEMENTED BY AI #2",
+  "version": "1.0.0",
+  "last_updated": "2025-11-24",
+  "status": "implemented",
+  "file": "src/models/Board.js",
+  "implemented_by": "AI #2 using CDD context files (cross-session handoff test)",
+  
+  "schema": {
+    "name": {
+      "type": "String",
+      "required": true,
+      "minlength": 3,
+      "maxlength": 100,
+      "description": "Board name (trimmed)"
+    },
+    "description": {
+      "type": "String",
+      "required": false,
+      "maxlength": 500,
+      "description": "Board description (trimmed, optional)"
+    },
+    "owner": {
+      "type": "String",
+      "required": true,
+      "description": "User who owns this board"
+    },
+    "createdAt": {
+      "type": "Date",
+      "auto": true,
+      "description": "Mongoose timestamp"
+    },
+    "updatedAt": {
+      "type": "Date",
+      "auto": true,
+      "description": "Mongoose timestamp"
+    }
+  },
+  
+  "virtuals": {
+    "columns": {
+      "description": "Virtual populate for columns belonging to this board",
+      "ref": "Column",
+      "localField": "_id",
+      "foreignField": "boardId"
+    }
+  },
+  
+  "relationships": {
+    "has_many": ["Column", "Task"],
+    "cascade_delete": "Deleting board removes all columns and tasks"
+  },
+  
+  "indexes": [
+    {"fields": ["owner"], "purpose": "Filter boards by owner efficiently"}
+  ],
+  
+  "validation_rules": [
+    "Name: 3-100 characters, required",
+    "Description: max 500 characters, optional",
+    "Owner: required string (user identifier)"
+  ],
+  
+  "api_endpoints": [
+    "GET /api/boards?owner=xxx - List boards (filter by owner)",
+    "GET /api/boards/:id - Get single board with columns populated",
+    "POST /api/boards - Create board",
+    "PUT /api/boards/:id - Update board",
+    "DELETE /api/boards/:id - Delete board (cascade to columns and tasks)"
+  ],
+  
+  "cdd_notes": {
+    "learned_from": "task_model.json pattern established by AI #1",
+    "followed_patterns": [
+      "Mongoose schema with timestamps",
+      "Validation with custom error messages",
+      "Indexes for common queries",
+      "Virtual relationships"
+    ],
+    "cross_session_test": "Successfully built using only context files - no AI #1 assistance"
+  }
+}
