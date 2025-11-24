@@ -27,6 +27,36 @@
     }
   },
   "commands": {
+    "init": {
+      "signature": "cdd init [path] [--force]",
+      "purpose": "Scaffold complete CDD structure with working templates",
+      "default_path": ". (current directory)",
+      "options": {
+        "force": "Overwrite existing files"
+      },
+      "creates": [
+        ".github/copilot-instructions.md - AI entry point with customizable template",
+        ".github/DEPENDENCY_GRAPH.json - Context router with example patterns",
+        ".github/ai-context/flows/feature_template.json - Implementation flow template",
+        ".github/ai-context/schemas/database_models.json - Data model template",
+        ".github/ai-context/troubleshooting/anti_patterns.json - Mistakes catalog",
+        ".github/ai-context/troubleshooting/decision_trees.json - Debug workflows"
+      ],
+      "workflow": [
+        "Check if .github/ai-context exists (warn if present)",
+        "Create directory structure (flows/, schemas/, troubleshooting/, metadata/)",
+        "Write template files with current date stamps",
+        "Provide next steps guidance"
+      ],
+      "design_goals": [
+        "Zero-friction adoption - works immediately after init",
+        "Templates pass validation out of the box",
+        "Clear placeholder text guides customization",
+        "Demonstrates CDD patterns through examples"
+      ],
+      "implementation": "src/commands/init.js",
+      "implementation_date": "2025-11-24"
+    },
     "validate": {
       "signature": "cdd validate [path] [--strict] [--fix]",
       "purpose": "Validate JSON syntax and structure of AI context files",
@@ -293,7 +323,8 @@
     "dogfooding_works": "Using the methodology on itself reveals gaps and validates approach",
     "copilot_instructions_created": "2025-11-24 - Added .github/copilot-instructions.md as quick reference layer, this file remains deep dive",
     "ai_to_ai_collaboration_works": "2025-11-24 - AI #2 implemented --json feature and autonomously updated this file without prompting. Protocol validated!",
-    "ai_collaboration_iteration_2": "AI #2 implemented --json, suggested --no-color. AI #1 implemented it. Ping-pong collaboration works!"
+    "ai_collaboration_iteration_2": "AI #2 implemented --json, suggested --no-color. AI #1 implemented it. Ping-pong collaboration works!",
+    "init_command_reduces_friction": "2025-11-24 - Added cdd init to eliminate adoption barriers. Generates working CDD structure in seconds."
   },
   "installation": {
     "from_source": [

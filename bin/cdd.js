@@ -2,6 +2,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
+import { initCommand } from '../src/commands/init.js';
 import { validateCommand } from '../src/commands/validate.js';
 import { auditCommand } from '../src/commands/audit.js';
 import { analyzeGapsCommand } from '../src/commands/analyze-gaps.js';
@@ -21,6 +22,13 @@ program.hook('preAction', (thisCommand) => {
     chalk.level = 0; // Disable chalk colors globally
   }
 });
+
+program
+  .command('init')
+  .description('Initialize Context-Driven Development structure in your project')
+  .argument('[path]', 'Path to project root', '.')
+  .option('--force', 'Overwrite existing files')
+  .action(initCommand);
 
 program
   .command('validate')

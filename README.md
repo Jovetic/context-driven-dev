@@ -15,6 +15,30 @@ npm install -g @context-driven-dev/cli
 
 ## Commands
 
+### `cdd init [path]`
+
+Initialize Context-Driven Development structure in your project.
+
+```bash
+# Initialize in current directory
+cdd init
+
+# Initialize in specific path
+cdd init /path/to/project
+
+# Overwrite existing files
+cdd init --force
+```
+
+**Creates:**
+- `.github/copilot-instructions.md` - Entry point for AI agents
+- `.github/DEPENDENCY_GRAPH.json` - Context router
+- `.github/ai-context/` - Modular context files
+  - `flows/feature_template.json` - Implementation guide template
+  - `schemas/database_models.json` - Data model documentation
+  - `troubleshooting/anti_patterns.json` - Known mistakes catalog
+  - `troubleshooting/decision_trees.json` - Debugging workflows
+
 ### `cdd validate [path]`
 
 Validate JSON syntax and structure of AI context files.
